@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Referentennotizen — geschützt</title>
+<style>
+:root{--bg:#0b0f1a;--card:#131929;--border:#1e2d45;--blue:#38bdf8;--purple:#a78bfa;--gold:#fbbf24;--green:#34d399;--red:#f87171;--text:#e2e8f0;--muted:#64748b}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;min-height:100dvh;overflow-x:hidden}
+
+/* LOCK SCREEN */
+#lock{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:20px}
+#lock h2{font-size:1.5rem;color:var(--muted)}
+#lock input{background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:1.1rem;padding:14px 20px;width:280px;text-align:center;outline:none}
+#lock input:focus{border-color:var(--blue)}
+#lock button{background:var(--blue);color:#000;font-weight:700;font-size:1rem;border:none;border-radius:10px;padding:14px 40px;cursor:pointer;width:280px}
+#lock .err{color:var(--red);font-size:.9rem;height:1.2rem}
+
+/* MAIN */
+#main{display:none;padding:12px}
+
+/* TIMER BAR */
+#timerbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#clock{font-size:2rem;font-weight:800;font-variant-numeric:tabular-nums;color:var(--blue);min-width:90px}
+#phase-label{font-size:.85rem;color:var(--muted);flex:1}
+.t-btn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 18px;border-radius:8px;font-size:.9rem;cursor:pointer}
+.t-btn:active{opacity:.7}
+#t-start{border-color:var(--green);color:var(--green)}
+#t-pause{border-color:var(--gold);color:var(--gold)}
+#t-reset{border-color:var(--red);color:var(--red)}
+
+/* NAV */
+#nav{display:flex;align-items:center;gap:10px;margin:10px 0;flex-wrap:wrap}
+#nav button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:8px;font-size:.95rem;cursor:pointer}
+#nav button:active{opacity:.7}
+#slide-ind{font-size:.9rem;color:var(--muted)}
+
+/* SECTIONS */
+.section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.section.active-sec{border-color:var(--blue)}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.sec-num{background:var(--blue);color:#000;font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:20px}
+.sec-title{font-weight:700;font-size:1.05rem}
+.sec-time{margin-left:auto;font-size:.82rem;color:var(--muted);background:rgba(255,255,255,.05);padding:3px 10px;border-radius:20px}
+.note{font-size:.95rem;line-height:1.7;color:var(--text)}
+.note strong{color:var(--blue)}
+.note em{color:var(--gold)}
+ul.bullets{margin:8px 0 0 4px;list-style:none}
+ul.bullets li{padding:3px 0;font-size:.95rem;line-height:1.6}
+ul.bullets li::before{content:'→ ';color:var(--blue)}
+ul.bullets li.ask::before{content:'❓ ';color:var(--gold)}
+ul.bullets li.do::before{content:'▶ ';color:var(--green)}
+ul.bullets li.warn::before{content:'⚠ ';color:var(--red)}
+
+/* EXPERIMENT BOX */
+.exp-box{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:14px 16px;margin-top:12px}
+.exp-title{color:var(--green);font-weight:700;font-size:.9rem;margin-bottom:8px}
+.check-row{display:flex;align-items:center;gap:10px;padding:4px 0}
+.check-row input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--green)}
+.check-row label{font-size:.92rem;cursor:pointer}
+
+/* VIDEO BOX */
+.vid-box{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.25);border-radius:10px;padding:14px 16px;margin-top:12px}
+.vid-title{color:var(--purple);font-weight:700;font-size:.9rem;margin-bottom:6px}
+
+/* TIMING OVERVIEW */
+#overview{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+#overview h3{font-size:.9rem;color:var(--muted);margin-bottom:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{text-align:left;color:var(--muted);font-weight:600;padding:4px 8px;border-bottom:1px solid var(--border)}
+td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.04)}
+tr.highlight-row td{color:var(--blue)}
+
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.75rem;font-weight:700;margin-left:6px}
+.tag-exp{background:rgba(52,211,153,.15);color:var(--green)}
+.tag-vid{background:rgba(167,139,250,.15);color:var(--purple)}
+.tag-disc{background:rgba(251,191,36,.15);color:var(--gold)}
+.tag-pause{background:rgba(100,116,139,.15);color:var(--muted)}
+</style>
+</head>
+<body>
+
+<!-- LOCK -->
+<div id="lock">
+  <p style="font-size:2rem">🔒</p>
+  <h2>Referentennotizen</h2>
+  <input type="password" id="pw" placeholder="Passwort" onkeydown="if(event.key==='Enter')unlock()">
+  <button onclick="unlock()">Entsperren</button>
+  <p class="err" id="err"></p>
+</div>
+
+<!-- MAIN (hidden until auth) -->
+<div id="main">
+
+  <!-- TIMER BAR -->
+  <div id="timerbar">
+    <span id="clock">00:00</span>
+    <span id="phase-label">Bereit</span>
+    <button class="t-btn" id="t-start" onclick="timerStart()">▶ Start</button>
+    <button class="t-btn" id="t-pause" onclick="timerPause()">⏸ Pause</button>
+    <button class="t-btn" id="t-reset" onclick="timerReset()">↺ Reset</button>
+  </div>
+
+  <!-- NAV -->
+  <div id="nav">
+    <button onclick="goSec(-1)">← Zurück</button>
+    <span id="slide-ind">Folie 1 / 19</span>
+    <button onclick="goSec(1)">Weiter →</button>
+  </div>
+
+  <!-- TIMING OVERVIEW -->
+  <div id="overview">
+    <h3>Zeitplan</h3>
+    <table>
+      <tr><th>#</th><th>Abschnitt</th><th>Dauer</th><th>Start (Block)</th></tr>
+      <tr class="highlight-row"><td>1–2</td><td>Titel + Agenda</td><td>5 min</td><td>0:00</td></tr>
+      <tr><td>3</td><td>Superposition</td><td>10 min</td><td>0:05</td></tr>
+      <tr><td>4</td><td>Die Frage</td><td>5 min</td><td>0:15</td></tr>
+      <tr><td>5</td><td>Interferenzmuster</td><td>10 min</td><td>0:20</td></tr>
+      <tr><td>6</td><td>Experiment <span class="tag tag-exp">EXP</span></td><td>25 min</td><td>0:30</td></tr>
+      <tr><td>7</td><td>Newton vs Young</td><td>15 min</td><td>0:55</td></tr>
+      <tr><td>8–9</td><td>Photoeffekt + Einstein</td><td>15 min</td><td>1:10</td></tr>
+      <tr><td>10</td><td>Dualismus</td><td>5 min</td><td>1:25</td></tr>
+      <tr><td>–</td><td>PAUSE <span class="tag tag-pause">PAUSE</span></td><td>15 min</td><td>–</td></tr>
+      <tr class="highlight-row"><td>12</td><td>Block 2 Intro</td><td>5 min</td><td>0:00</td></tr>
+      <tr><td>13</td><td>Erwartung</td><td>5 min</td><td>0:05</td></tr>
+      <tr><td>14</td><td>Tonomura <span class="tag tag-vid">VIDEO</span></td><td>20 min</td><td>0:10</td></tr>
+      <tr><td>15</td><td>Welcher Weg <span class="tag tag-disc">DISK</span></td><td>20 min</td><td>0:30</td></tr>
+      <tr><td>16</td><td>Heisenberg</td><td>15 min</td><td>0:50</td></tr>
+      <tr><td>17</td><td>Schrödinger <span class="tag tag-disc">DISK</span></td><td>15 min</td><td>1:05</td></tr>
+      <tr><td>18</td><td>Quantencomputing</td><td>5 min</td><td>1:20</td></tr>
+      <tr><td>19</td><td>Fazit</td><td>10 min</td><td>1:25</td></tr>
+    </table>
+  </div>
+
+  <!-- SECTIONS -->
+  <div id="sections">
+
+  <div class="section" data-slide="1" data-time="0:00 – 0:02">
+    <div class="sec-head"><span class="sec-num">1</span><span class="sec-title">Titel</span><span class="sec-time">2 min</span></div>
+    <ul class="bullets">
+      <li class="do">Kurz vorstellen: "Wir sind Simon, Robin und Lucas aus der 9/1"</li>
+      <li>"Heute nehmen wir euch mit auf eine Reise — von Licht, das ihr kennt, bis zu Physik, die niemand wirklich versteht"</li>
+      <li>"Kein einziges sin, cos oder tan — versprochen"</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="2" data-time="0:02 – 0:05">
+    <div class="sec-head"><span class="sec-num">2</span><span class="sec-title">Agenda</span><span class="sec-time">3 min</span></div>
+    <ul class="bullets">
+      <li class="do">Agenda kurz durchgehen, nicht vorlesen — nur drauf zeigen</li>
+      <li>"Block 1 ist klassische Physik — da noch vertraut"</li>
+      <li>"Block 2 wird seltsam. Das ist Absicht."</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="3" data-time="0:05 – 0:15">
+    <div class="sec-head"><span class="sec-num">3</span><span class="sec-title">Superposition Rückblick</span><span class="sec-time">10 min</span></div>
+    <ul class="bullets">
+      <li class="ask">Frage an die Klasse: "Wer kann mir noch mal erklären was das Superpositionsprinzip ist?"</li>
+      <li class="do">Antworten abwarten und ergänzen</li>
+      <li>Erwartete Antwort: Wellen überlagern sich</li>
+      <li>Konstruktiv: Berg + Berg → größere Amplitude</li>
+      <li>Destruktiv: Berg + Tal → Auslöschung, nichts zu sehen</li>
+      <li>"Genau das. Das ist euer Werkzeug für heute — behaltet das im Kopf"</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="4" data-time="0:15 – 0:20">
+    <div class="sec-head"><span class="sec-num">4</span><span class="sec-title">Die Frage</span><span class="sec-time">5 min</span></div>
+    <ul class="bullets">
+      <li>"Stellt euch vor: eine Wand mit zwei schmalen Spalten. Dahinter ein Schirm."</li>
+      <li class="ask">"Was erwartet ihr auf dem Schirm?" → kurze Pause</li>
+      <li>Typische Antwort: zwei helle Streifen</li>
+      <li>"Das wäre logisch — aber falsch. Gleich seht ihr warum."</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="5" data-time="0:20 – 0:30">
+    <div class="sec-head"><span class="sec-num">5</span><span class="sec-title">Interferenzmuster</span><span class="sec-time">10 min</span></div>
+    <ul class="bullets">
+      <li>"Das ist was wirklich passiert — viele Streifen, nicht zwei."</li>
+      <li>"An jedem Spalt entsteht eine neue Welle. Beide Wellen breiten sich aus."</li>
+      <li>"Wo Berg auf Berg trifft: heller Streifen. Wo Berg auf Tal trifft: dunkel."</li>
+      <li>"Das kennt ihr — das ist Superposition! Ihr habt das schon gelernt."</li>
+      <li class="ask">"Macht das Sinn?" → kurze Rückfrage</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="6" data-time="0:30 – 0:55">
+    <div class="sec-head"><span class="sec-num">6</span><span class="sec-title">Experiment</span><span class="sec-time">25 min</span></div>
+    <div class="exp-box">
+      <p class="exp-title">🔬 EXPERIMENT — Laser-Doppelspalt</p>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px">Lucas baut auf, Robin hält Schirm</p>
+      <p style="font-size:.88rem;font-weight:600;margin-bottom:8px;color:var(--green)">Material:</p>
+      <div class="check-row"><input type="checkbox" id="m1"><label for="m1">Laserpointer (rot oder grün)</label></div>
+      <div class="check-row"><input type="checkbox" id="m2"><label for="m2">Doppelspaltblende (aus Physiksammlung)</label></div>
+      <div class="check-row"><input type="checkbox" id="m3"><label for="m3">Weißes Blatt Papier / helle Wand als Schirm</label></div>
+      <div class="check-row"><input type="checkbox" id="m4"><label for="m4">Möglichkeit Licht zu dimmen / Jalousien</label></div>
+      <p style="font-size:.88rem;font-weight:600;margin:10px 0 6px;color:var(--green)">Aufbau (Lucas):</p>
+      <div class="check-row"><input type="checkbox" id="a1"><label for="a1">Schirm aufstellen / Robin hält Papier an Wand</label></div>
+      <div class="check-row"><input type="checkbox" id="a2"><label for="a2">Doppelspaltblende davor (ca. 1–2 m Abstand)</label></div>
+      <div class="check-row"><input type="checkbox" id="a3"><label for="a3">Laser dahinter auf Blende ausrichten</label></div>
+      <div class="check-row"><input type="checkbox" id="a4"><label for="a4">Jalousien schließen / Licht dimmen</label></div>
+    </div>
+    <ul class="bullets" style="margin-top:10px">
+      <li class="do">Laser einschalten</li>
+      <li class="ask">"Was seht ihr?" → Antworten sammeln</li>
+      <li>"Helle und dunkle Streifen — genau wie wir's vorhergesagt haben"</li>
+      <li>"Die Mitte ist am hellsten — da überlagern sich die Wellen am stärksten"</li>
+      <li class="warn">Laser nie in Augen richten — kurz ansprechen</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="7" data-time="0:55 – 1:10">
+    <div class="sec-head"><span class="sec-num">7</span><span class="sec-title">Newton vs. Young</span><span class="sec-time">15 min</span></div>
+    <ul class="bullets">
+      <li>"Isaac Newton, Ende 1600er: Licht besteht aus winzigen Teilchen — Korpuskeln"</li>
+      <li>"Erklärt gut warum Licht reflektiert wird — wie ein Gummiball"</li>
+      <li>"Aber: Beugung und Streifen? Das kann er nicht erklären."</li>
+      <li>"Christiaan Huygens: Licht ist eine Welle. Wellen können sich biegen und überlagern."</li>
+      <li>"1801 macht Thomas Young das Experiment — und sieht Interferenz"</li>
+      <li>"Interferenz können nur Wellen. Teilchen nicht. Young hatte recht."</li>
+      <li class="ask">"Fragen zu dieser Geschichte?"</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="8" data-time="1:10 – 1:20">
+    <div class="sec-head"><span class="sec-num">8</span><span class="sec-title">Photoelektrischer Effekt</span><span class="sec-time">10 min</span></div>
+    <ul class="bullets">
+      <li>"Neues Experiment: Licht auf eine Metallplatte — Elektronen fliegen raus"</li>
+      <li>"Wenn Licht eine Welle ist: helleres Licht = mehr Energie = mehr Elektronen. Logisch?"</li>
+      <li class="ask">"Was würdet ihr erwarten?" → kurze Pause</li>
+      <li>"Aber: rotes Licht, noch so hell → überhaupt keine Elektronen"</li>
+      <li>"UV-Licht, ganz schwach → sofort Elektronen"</li>
+      <li>"Die Helligkeit spielt keine Rolle — nur die Farbe (Frequenz)"</li>
+      <li class="ask">"Warum könnte das so sein?"</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="9" data-time="1:20 – 1:25">
+    <div class="sec-head"><span class="sec-num">9</span><span class="sec-title">Einstein</span><span class="sec-time">5 min</span></div>
+    <ul class="bullets">
+      <li>"1905 — Albert Einstein. Selbes Jahr wie Relativitätstheorie."</li>
+      <li>"Er sagt: Licht kommt in Paketen. Jedes Paket = ein Photon."</li>
+      <li>"Hohes Photon (= blaues/UV-Licht) = mehr Energie. Niederiges Photon (= rotes Licht) = weniger."</li>
+      <li>"Ein Photon muss genug Energie haben um ein Elektron rauszuschlagen. Rotes Licht: reicht nicht."</li>
+      <li>"Dafür: Nobelpreis 1921. Nicht für Relativitätstheorie — für das hier."</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="10" data-time="1:25 – 1:30">
+    <div class="sec-head"><span class="sec-num">10</span><span class="sec-title">Welle-Teilchen-Dualismus</span><span class="sec-time">5 min</span></div>
+    <ul class="bullets">
+      <li>"Jetzt haben wir ein Problem — oder?"</li>
+      <li>"Doppelspalt zeigt: Licht ist eine Welle. Photoeffekt zeigt: Licht ist ein Teilchen."</li>
+      <li>"Widerspruch? Nein — es kommt darauf an was wir messen."</li>
+      <li>"Das ist der Welle-Teilchen-Dualismus. Das Seltsame fängt hier an."</li>
+      <li>"Nach der Pause wird's noch seltsamer."</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="11" data-time="PAUSE">
+    <div class="sec-head"><span class="sec-num">P</span><span class="sec-title">PAUSE</span><span class="sec-time">15 min</span></div>
+    <ul class="bullets">
+      <li class="do">Timer zurücksetzen für Block 2</li>
+      <li class="do">Experiment-Material wegräumen</li>
+      <li class="do">Lucas: Handy/Tablet mit YouTube "Tonomura electron double slit" bereit machen</li>
+      <li class="do">Sicherstellen dass Video funktioniert (Ton aus ist OK)</li>
+    </ul>
+    <div class="vid-box">
+      <p class="vid-title">📹 Video für Block 2 vorbereiten</p>
+      <p style="font-size:.88rem">YouTube-Suche: <strong style="color:var(--purple)">"Tonomura electron double slit"</strong></p>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:4px">Länge: ~2 min. Am besten auf Pause bei 0:00 stehen lassen.</p>
+      <div class="check-row" style="margin-top:8px"><input type="checkbox" id="v1"><label for="v1">Video geöffnet und bereit</label></div>
+      <div class="check-row"><input type="checkbox" id="v2"><label for="v2">Ton aus oder leise</label></div>
+    </div>
+  </div>
+
+  <div class="section" data-slide="12" data-time="0:00 – 0:05">
+    <div class="sec-head"><span class="sec-num">12</span><span class="sec-title">Block 2 — Was sind Elektronen?</span><span class="sec-time">5 min</span></div>
+    <ul class="bullets">
+      <li>"Willkommen in Block 2. Hier wird's komisch — das sage ich euch jetzt schon."</li>
+      <li class="ask">"Was sind Elektronen?" → Antworten sammeln (Teilchen, Masse, Ladung)</li>
+      <li>"Richtig — eindeutig ein Teilchen. Mit Masse. Mit Ladung."</li>
+      <li class="ask">"Was erwartet ihr also wenn wir Elektronen durch einen Doppelspalt schießen?"</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="13" data-time="0:05 – 0:10">
+    <div class="sec-head"><span class="sec-num">13</span><span class="sec-title">Erwartung</span><span class="sec-time">5 min</span></div>
+    <ul class="bullets">
+      <li>"Erwartung: zwei Häufungen. Wie wenn man Kugeln durch zwei Löcher wirft."</li>
+      <li>"Teilchen gehen durch einen Spalt oder den anderen — nicht durch beide gleichzeitig."</li>
+      <li>"Das ist die vernünftige Erwartung."</li>
+      <li>"Jetzt schauen wir was wirklich passiert."</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="14" data-time="0:10 – 0:30">
+    <div class="sec-head"><span class="sec-num">14</span><span class="sec-title">Tonomura 1989</span><span class="sec-time">20 min</span></div>
+    <div class="vid-box">
+      <p class="vid-title">📹 Video abspielen: Tonomura Experiment</p>
+      <p style="font-size:.88rem">Klasse still sein lassen — einfach zuschauen</p>
+      <div class="check-row" style="margin-top:6px"><input type="checkbox" id="v3"><label for="v3">Video gestartet</label></div>
+    </div>
+    <ul class="bullets" style="margin-top:10px">
+      <li class="do">Nach Video: Stille zulassen — 5 Sekunden nichts sagen</li>
+      <li class="ask">"Was habt ihr gesehen?"</li>
+      <li>"Einzelne Elektronen — aber trotzdem entsteht ein Interferenzmuster"</li>
+      <li>"Jedes einzelne Elektron 'weiß' irgendwie von beiden Spalten"</li>
+      <li>"Auch Elektronen — eindeutige Teilchen — zeigen Welle-Teilchen-Dualismus"</li>
+      <li class="ask">"Wie kann das sein?" → Diskussion, keine 'richtige' Antwort nötig</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="15" data-time="0:30 – 0:50">
+    <div class="sec-head"><span class="sec-num">15</span><span class="sec-title">Welcher-Weg-Versuch</span><span class="sec-time">20 min</span></div>
+    <ul class="bullets">
+      <li>"Man dachte: okay, wir schauen einfach nach durch welchen Spalt das Elektron geht."</li>
+      <li>"Detektor anbringen — misst welchen Spalt das Elektron passiert."</li>
+      <li>"Und dann?"</li>
+      <li class="warn">"Das Muster verschwindet. Sofort."</li>
+      <li>"Sobald wir wissen durch welchen Spalt → verhält sich das Elektron wie ein Teilchen"</li>
+      <li>"Sobald wir es nicht wissen → verhält es sich wie eine Welle"</li>
+      <li class="ask">"Was sagt euch das?" → offene Diskussion, alles ist erlaubt</li>
+      <li>"Die Messung selbst — der Akt des Hinschauens — verändert das Ergebnis"</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="16" data-time="0:50 – 1:05">
+    <div class="sec-head"><span class="sec-num">16</span><span class="sec-title">Heisenberg-Unschärfe</span><span class="sec-time">15 min</span></div>
+    <ul class="bullets">
+      <li>"Werner Heisenberg hat das 1927 mathematisch bewiesen — wir machen es qualitativ."</li>
+      <li>"Je genauer wir den Ort eines Teilchens kennen, desto ungenauer sein Impuls — und umgekehrt."</li>
+      <li>"Ort und Impuls können nicht gleichzeitig beliebig genau bekannt sein."</li>
+      <li>"Das ist kein Messfehler. Kein Geräteproblem. Die Natur erlaubt es schlicht nicht."</li>
+      <li>"Beim Welcher-Weg: wir messen den Ort (welcher Spalt). Impuls wird unscharf. Kein Muster."</li>
+      <li class="ask">"Macht das Sinn — oder ist das komisch?" → beide Antworten sind richtig</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="17" data-time="1:05 – 1:20">
+    <div class="sec-head"><span class="sec-num">17</span><span class="sec-title">Schrödingers Katze</span><span class="sec-time">15 min</span></div>
+    <ul class="bullets">
+      <li>"Erwin Schrödinger wollte zeigen wie absurd Quantenphysik ist — als Kritik gedacht"</li>
+      <li>"Box: Katze, radioaktives Atom, Giftmechanismus (Auslöser bei Zerfall)"</li>
+      <li>"Das Atom ist in Superposition: zerfallen UND nicht zerfallen gleichzeitig"</li>
+      <li>"Dann: ist die Katze tot UND lebendig gleichzeitig — solange wir nicht reinschauen?"</li>
+      <li>"Die Quantenmechanik sagt: ja."</li>
+      <li class="ask">"Was meint ihr — ist die Katze wirklich beides? Oder ist das nur Mathematik?"</li>
+      <li>"Das ist bis heute offen. Physiker streiten sich."</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="18" data-time="1:20 – 1:25">
+    <div class="sec-head"><span class="sec-num">18</span><span class="sec-title">Quantencomputing</span><span class="sec-time">5 min</span></div>
+    <ul class="bullets">
+      <li>"Und genau diese Eigenschaft — Superposition — nutzen Quantencomputer."</li>
+      <li>"Normaler Bit: 0 oder 1. Qubit: 0 UND 1 gleichzeitig — in Superposition."</li>
+      <li>"Kann alle möglichen Berechnungen gleichzeitig durchführen — massiv schneller."</li>
+      <li>"Google, IBM, China, USA — Milliarden werden investiert."</li>
+      <li>"Ihr versteht jetzt die physikalische Grundlage dahinter."</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="19" data-time="1:25 – 1:30+">
+    <div class="sec-head"><span class="sec-num">19</span><span class="sec-title">Fazit</span><span class="sec-time">10 min</span></div>
+    <ul class="bullets">
+      <li class="do">Punkte kurz durchgehen, Klasse ergänzen lassen</li>
+      <li>"Licht und Elektronen: je nach Messung Welle oder Teilchen"</li>
+      <li>"Messen selbst verändert das System — keine neutrale Beobachtung möglich"</li>
+      <li>"Natur ist fundamentell unscharf — das ist keine Unkenntnis, das ist Realität"</li>
+      <li>"Das ist Quantenphysik — und das ist erst der Anfang"</li>
+      <li class="ask">"Fragen? Irgendwas das ihr nicht verstanden habt oder komisch fandet?"</li>
+      <li class="do">Zeit für offene Diskussion lassen</li>
+    </ul>
+  </div>
+
+  </div><!-- /sections -->
+</div><!-- /main -->
+
+<script>
+// --- AUTH ---
+const HASH='8ce97d93e2bcd26be81ddd8ed2a4cf988ebeb48f4e54844ce89e0bd7c9bf010d';
+async function sha256(s){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function unlock(){
+  const v=document.getElementById('pw').value;
+  const h=await sha256(v);
+  if(h===HASH){
+    document.getElementById('lock').style.display='none';
+    document.getElementById('main').style.display='block';
+  }else{
+    document.getElementById('err').textContent='Falsches Passwort';
+    document.getElementById('pw').value='';
+    setTimeout(()=>document.getElementById('err').textContent='',2000);
+  }
+}
+
+// --- TIMER ---
+let elapsed=0,running=false,interval=null;
+function timerStart(){
+  if(running)return;
+  running=true;
+  interval=setInterval(()=>{elapsed++;renderClock();},1000);
+  document.getElementById('phase-label').textContent='Läuft…';
+}
+function timerPause(){
+  running=false;clearInterval(interval);
+  document.getElementById('phase-label').textContent='Pausiert';
+}
+function timerReset(){
+  timerPause();elapsed=0;renderClock();
+  document.getElementById('phase-label').textContent='Bereit';
+}
+function renderClock(){
+  const m=Math.floor(elapsed/60).toString().padStart(2,'0');
+  const s=(elapsed%60).toString().padStart(2,'0');
+  document.getElementById('clock').textContent=m+':'+s;
+}
+
+// --- NAV ---
+const secs=document.querySelectorAll('.section');
+let cur=0;
+function goSec(d){
+  secs[cur].classList.remove('active-sec');
+  cur=Math.max(0,Math.min(secs.length-1,cur+d));
+  secs[cur].classList.add('active-sec');
+  secs[cur].scrollIntoView({behavior:'smooth',block:'start'});
+  const slide=secs[cur].dataset.slide;
+  document.getElementById('slide-ind').textContent='Folie '+slide+' / 19';
+}
+secs[0].classList.add('active-sec');
+</script>
+</body>
+</html>
