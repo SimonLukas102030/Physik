@@ -77,6 +77,7 @@ tr.highlight-row td{color:var(--blue)}
 .tag-vid{background:rgba(167,139,250,.15);color:var(--purple)}
 .tag-disc{background:rgba(251,191,36,.15);color:var(--gold)}
 .tag-pause{background:rgba(100,116,139,.15);color:var(--muted)}
+.tag-new{background:rgba(56,189,248,.15);color:var(--blue)}
 </style>
 </head>
 <body>
@@ -105,7 +106,7 @@ tr.highlight-row td{color:var(--blue)}
   <!-- NAV -->
   <div id="nav">
     <button onclick="goSec(-1)">← Zurück</button>
-    <span id="slide-ind">Folie 1 / 19</span>
+    <span id="slide-ind">Folie 1 / 22</span>
     <button onclick="goSec(1)">Weiter →</button>
   </div>
 
@@ -115,22 +116,25 @@ tr.highlight-row td{color:var(--blue)}
     <table>
       <tr><th>#</th><th>Abschnitt</th><th>Dauer</th><th>Start (Block)</th></tr>
       <tr class="highlight-row"><td>1–2</td><td>Titel + Agenda</td><td>5 min</td><td>0:00</td></tr>
-      <tr><td>3</td><td>Superposition</td><td>10 min</td><td>0:05</td></tr>
-      <tr><td>4</td><td>Die Frage</td><td>5 min</td><td>0:15</td></tr>
-      <tr><td>5</td><td>Interferenzmuster</td><td>10 min</td><td>0:20</td></tr>
-      <tr><td>6</td><td>Experiment <span class="tag tag-exp">EXP</span></td><td>25 min</td><td>0:30</td></tr>
-      <tr><td>7</td><td>Newton vs Young</td><td>15 min</td><td>0:55</td></tr>
-      <tr><td>8–9</td><td>Photoeffekt + Einstein</td><td>15 min</td><td>1:10</td></tr>
-      <tr><td>10</td><td>Dualismus</td><td>5 min</td><td>1:25</td></tr>
+      <tr><td>3</td><td>Was ist eine Welle? <span class="tag tag-new">NEU</span></td><td>8 min</td><td>0:05</td></tr>
+      <tr><td>4</td><td>Welleneigenschaften <span class="tag tag-new">NEU</span></td><td>7 min</td><td>0:13</td></tr>
+      <tr><td>5</td><td>c = λ · f <span class="tag tag-new">NEU</span></td><td>5 min</td><td>0:20</td></tr>
+      <tr><td>6</td><td>Superposition</td><td>5 min</td><td>0:25</td></tr>
+      <tr><td>7</td><td>Die Frage</td><td>5 min</td><td>0:30</td></tr>
+      <tr><td>8</td><td>Interferenzmuster</td><td>10 min</td><td>0:35</td></tr>
+      <tr><td>9</td><td>Experiment <span class="tag tag-exp">EXP</span></td><td>20 min</td><td>0:45</td></tr>
+      <tr><td>10</td><td>Newton vs Young</td><td>10 min</td><td>1:05</td></tr>
+      <tr><td>11–12</td><td>Photoeffekt + Einstein</td><td>13 min</td><td>1:15</td></tr>
+      <tr><td>13</td><td>Dualismus</td><td>5 min</td><td>1:28</td></tr>
       <tr><td>–</td><td>PAUSE <span class="tag tag-pause">PAUSE</span></td><td>15 min</td><td>–</td></tr>
-      <tr class="highlight-row"><td>12</td><td>Block 2 Intro</td><td>5 min</td><td>0:00</td></tr>
-      <tr><td>13</td><td>Erwartung</td><td>5 min</td><td>0:05</td></tr>
-      <tr><td>14</td><td>Tonomura <span class="tag tag-vid">VIDEO</span></td><td>20 min</td><td>0:10</td></tr>
-      <tr><td>15</td><td>Welcher Weg <span class="tag tag-disc">DISK</span></td><td>20 min</td><td>0:30</td></tr>
-      <tr><td>16</td><td>Heisenberg</td><td>15 min</td><td>0:50</td></tr>
-      <tr><td>17</td><td>Schrödinger <span class="tag tag-disc">DISK</span></td><td>15 min</td><td>1:05</td></tr>
-      <tr><td>18</td><td>Quantencomputing</td><td>5 min</td><td>1:20</td></tr>
-      <tr><td>19</td><td>Fazit</td><td>10 min</td><td>1:25</td></tr>
+      <tr class="highlight-row"><td>15</td><td>Block 2 Intro</td><td>5 min</td><td>0:00</td></tr>
+      <tr><td>16</td><td>Erwartung</td><td>5 min</td><td>0:05</td></tr>
+      <tr><td>17</td><td>Tonomura <span class="tag tag-vid">VIDEO</span></td><td>20 min</td><td>0:10</td></tr>
+      <tr><td>18</td><td>Welcher Weg <span class="tag tag-disc">DISK</span></td><td>20 min</td><td>0:30</td></tr>
+      <tr><td>19</td><td>Heisenberg</td><td>15 min</td><td>0:50</td></tr>
+      <tr><td>20</td><td>Schrödinger <span class="tag tag-disc">DISK</span></td><td>15 min</td><td>1:05</td></tr>
+      <tr><td>21</td><td>Quantencomputing</td><td>5 min</td><td>1:20</td></tr>
+      <tr><td>22</td><td>Fazit</td><td>10 min</td><td>1:25</td></tr>
     </table>
   </div>
 
@@ -150,25 +154,65 @@ tr.highlight-row td{color:var(--blue)}
     <div class="sec-head"><span class="sec-num">2</span><span class="sec-title">Agenda</span><span class="sec-time">3 min</span></div>
     <ul class="bullets">
       <li class="do">Agenda kurz durchgehen, nicht vorlesen — nur drauf zeigen</li>
-      <li>"Block 1 ist klassische Physik — da noch vertraut"</li>
+      <li>"Block 1 starten wir mit Wellen — kurze Einführung, dann Doppelspalt"</li>
       <li>"Block 2 wird seltsam. Das ist Absicht."</li>
     </ul>
   </div>
 
-  <div class="section" data-slide="3" data-time="0:05 – 0:15">
-    <div class="sec-head"><span class="sec-num">3</span><span class="sec-title">Superposition Rückblick</span><span class="sec-time">10 min</span></div>
+  <!-- ===== NEU: WELLEN-EINFÜHRUNG ===== -->
+
+  <div class="section" data-slide="3" data-time="0:05 – 0:13">
+    <div class="sec-head"><span class="sec-num" style="background:#0ea5e9">3</span><span class="sec-title">Was ist eine Welle? <span class="tag tag-new">NEU</span></span><span class="sec-time">8 min</span></div>
     <ul class="bullets">
-      <li class="ask">Frage an die Klasse: "Wer kann mir noch mal erklären was das Superpositionsprinzip ist?"</li>
-      <li class="do">Antworten abwarten und ergänzen</li>
-      <li>Erwartete Antwort: Wellen überlagern sich</li>
-      <li>Konstruktiv: Berg + Berg → größere Amplitude</li>
-      <li>Destruktiv: Berg + Tal → Auslöschung, nichts zu sehen</li>
+      <li class="ask">Einstieg: "Kennt ihr Wellen? Was ist eine Welle?"</li>
+      <li>Kurze Antworten sammeln — dann Folie zeigen</li>
+      <li>"Eine Welle transportiert Energie — aber keine Materie"</li>
+      <li>"Stein ins Wasser: das Blatt treibt auf der Stelle. Die Energie wandert, nicht das Wasser."</li>
+      <li>Beispiele zeigen: Wasser, Schall, Licht — alle sind Wellen</li>
+      <li class="do">Auf die animierte Welle auf der Folie zeigen</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="4" data-time="0:13 – 0:20">
+    <div class="sec-head"><span class="sec-num" style="background:#0ea5e9">4</span><span class="sec-title">Welleneigenschaften <span class="tag tag-new">NEU</span></span><span class="sec-time">7 min</span></div>
+    <ul class="bullets">
+      <li>"Eine Welle hat Berge und Täler — das bezeichnet man als Wellenberg und Wellental"</li>
+      <li><strong>Amplitude (A)</strong>: "Wie hoch ist der Berg? Das ist die Stärke der Welle. Mehr Amplitude = lauter, heller, stärker."</li>
+      <li><strong>Wellenlänge (λ)</strong>: "Abstand von Berg zu Berg — der griechische Buchstabe Lambda"</li>
+      <li><strong>Frequenz (f)</strong>: "Wie viele vollständige Wellen pro Sekunde? Einheit: Hz (Hertz)"</li>
+      <li class="ask">"Hohe Frequenz oder niedrige Frequenz — was ist Licht?" → kommt gleich</li>
+      <li class="do">Diagramm auf der Folie mit Finger zeigen beim Erklären</li>
+    </ul>
+  </div>
+
+  <div class="section" data-slide="5" data-time="0:20 – 0:25">
+    <div class="sec-head"><span class="sec-num" style="background:#0ea5e9">5</span><span class="sec-title">c = λ · f <span class="tag tag-new">NEU</span></span><span class="sec-time">5 min</span></div>
+    <ul class="bullets">
+      <li>"Jetzt verbinden wir das — eine Gleichung, drei Teile"</li>
+      <li>"c ist die Geschwindigkeit: wie schnell wandert die Welle?"</li>
+      <li>"λ ist die Wellenlänge: wie lang ist eine Welle?"</li>
+      <li>"f ist die Frequenz: wie viele Wellen pro Sekunde?"</li>
+      <li>"c = λ mal f — Geschwindigkeit ist Wellenlänge mal Frequenz"</li>
+      <li>Beispiel durchgehen: Schall 343 m/s, 440 Hz → λ = 343 ÷ 440 ≈ 0,78 m</li>
+      <li>"Fast so lang wie euer Arm — das ist eine einzige Schallwelle beim Kammerton A"</li>
+      <li class="ask">Kurze Pause: "Macht das Sinn? Fragen?"</li>
+    </ul>
+  </div>
+
+  <!-- ===== BESTEHENDE ABSCHNITTE (neu nummeriert) ===== -->
+
+  <div class="section" data-slide="6" data-time="0:25 – 0:30">
+    <div class="sec-head"><span class="sec-num">6</span><span class="sec-title">Superposition</span><span class="sec-time">5 min</span></div>
+    <ul class="bullets">
+      <li>"Jetzt der wichtigste Teil — was passiert wenn zwei Wellen aufeinandertreffen?"</li>
+      <li>Konstruktiv: Berg + Berg = größere Amplitude (Verstärkung)</li>
+      <li>Destruktiv: Berg + Tal = Auslöschung, nichts zu sehen</li>
       <li>"Genau das. Das ist euer Werkzeug für heute — behaltet das im Kopf"</li>
     </ul>
   </div>
 
-  <div class="section" data-slide="4" data-time="0:15 – 0:20">
-    <div class="sec-head"><span class="sec-num">4</span><span class="sec-title">Die Frage</span><span class="sec-time">5 min</span></div>
+  <div class="section" data-slide="7" data-time="0:30 – 0:35">
+    <div class="sec-head"><span class="sec-num">7</span><span class="sec-title">Die Frage</span><span class="sec-time">5 min</span></div>
     <ul class="bullets">
       <li>"Stellt euch vor: eine Wand mit zwei schmalen Spalten. Dahinter ein Schirm."</li>
       <li class="ask">"Was erwartet ihr auf dem Schirm?" → kurze Pause</li>
@@ -177,19 +221,19 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="5" data-time="0:20 – 0:30">
-    <div class="sec-head"><span class="sec-num">5</span><span class="sec-title">Interferenzmuster</span><span class="sec-time">10 min</span></div>
+  <div class="section" data-slide="8" data-time="0:35 – 0:45">
+    <div class="sec-head"><span class="sec-num">8</span><span class="sec-title">Interferenzmuster</span><span class="sec-time">10 min</span></div>
     <ul class="bullets">
       <li>"Das ist was wirklich passiert — viele Streifen, nicht zwei."</li>
       <li>"An jedem Spalt entsteht eine neue Welle. Beide Wellen breiten sich aus."</li>
       <li>"Wo Berg auf Berg trifft: heller Streifen. Wo Berg auf Tal trifft: dunkel."</li>
-      <li>"Das kennt ihr — das ist Superposition! Ihr habt das schon gelernt."</li>
+      <li>"Das kennt ihr — das ist Superposition! Haben wir gerade gelernt."</li>
       <li class="ask">"Macht das Sinn?" → kurze Rückfrage</li>
     </ul>
   </div>
 
-  <div class="section" data-slide="6" data-time="0:30 – 0:55">
-    <div class="sec-head"><span class="sec-num">6</span><span class="sec-title">Experiment</span><span class="sec-time">25 min</span></div>
+  <div class="section" data-slide="9" data-time="0:45 – 1:05">
+    <div class="sec-head"><span class="sec-num">9</span><span class="sec-title">Experiment</span><span class="sec-time">20 min</span></div>
     <div class="exp-box">
       <p class="exp-title">🔬 EXPERIMENT — Laser-Doppelspalt</p>
       <p style="font-size:.85rem;color:var(--muted);margin-bottom:10px">Lucas baut auf, Robin hält Schirm</p>
@@ -213,8 +257,8 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="7" data-time="0:55 – 1:10">
-    <div class="sec-head"><span class="sec-num">7</span><span class="sec-title">Newton vs. Young</span><span class="sec-time">15 min</span></div>
+  <div class="section" data-slide="10" data-time="1:05 – 1:15">
+    <div class="sec-head"><span class="sec-num">10</span><span class="sec-title">Newton vs. Young</span><span class="sec-time">10 min</span></div>
     <ul class="bullets">
       <li>"Isaac Newton, Ende 1600er: Licht besteht aus winzigen Teilchen — Korpuskeln"</li>
       <li>"Erklärt gut warum Licht reflektiert wird — wie ein Gummiball"</li>
@@ -226,8 +270,8 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="8" data-time="1:10 – 1:20">
-    <div class="sec-head"><span class="sec-num">8</span><span class="sec-title">Photoelektrischer Effekt</span><span class="sec-time">10 min</span></div>
+  <div class="section" data-slide="11" data-time="1:15 – 1:23">
+    <div class="sec-head"><span class="sec-num">11</span><span class="sec-title">Photoelektrischer Effekt</span><span class="sec-time">8 min</span></div>
     <ul class="bullets">
       <li>"Neues Experiment: Licht auf eine Metallplatte — Elektronen fliegen raus"</li>
       <li>"Wenn Licht eine Welle ist: helleres Licht = mehr Energie = mehr Elektronen. Logisch?"</li>
@@ -239,19 +283,19 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="9" data-time="1:20 – 1:25">
-    <div class="sec-head"><span class="sec-num">9</span><span class="sec-title">Einstein</span><span class="sec-time">5 min</span></div>
+  <div class="section" data-slide="12" data-time="1:23 – 1:28">
+    <div class="sec-head"><span class="sec-num">12</span><span class="sec-title">Einstein</span><span class="sec-time">5 min</span></div>
     <ul class="bullets">
       <li>"1905 — Albert Einstein. Selbes Jahr wie Relativitätstheorie."</li>
       <li>"Er sagt: Licht kommt in Paketen. Jedes Paket = ein Photon."</li>
-      <li>"Hohes Photon (= blaues/UV-Licht) = mehr Energie. Niederiges Photon (= rotes Licht) = weniger."</li>
+      <li>"Hohes Photon (= blaues/UV-Licht) = mehr Energie. Niederes Photon (= rotes Licht) = weniger."</li>
       <li>"Ein Photon muss genug Energie haben um ein Elektron rauszuschlagen. Rotes Licht: reicht nicht."</li>
       <li>"Dafür: Nobelpreis 1921. Nicht für Relativitätstheorie — für das hier."</li>
     </ul>
   </div>
 
-  <div class="section" data-slide="10" data-time="1:25 – 1:30">
-    <div class="sec-head"><span class="sec-num">10</span><span class="sec-title">Welle-Teilchen-Dualismus</span><span class="sec-time">5 min</span></div>
+  <div class="section" data-slide="13" data-time="1:28 – 1:33">
+    <div class="sec-head"><span class="sec-num">13</span><span class="sec-title">Welle-Teilchen-Dualismus</span><span class="sec-time">5 min</span></div>
     <ul class="bullets">
       <li>"Jetzt haben wir ein Problem — oder?"</li>
       <li>"Doppelspalt zeigt: Licht ist eine Welle. Photoeffekt zeigt: Licht ist ein Teilchen."</li>
@@ -261,7 +305,7 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="11" data-time="PAUSE">
+  <div class="section" data-slide="14" data-time="PAUSE">
     <div class="sec-head"><span class="sec-num">P</span><span class="sec-title">PAUSE</span><span class="sec-time">15 min</span></div>
     <ul class="bullets">
       <li class="do">Timer zurücksetzen für Block 2</li>
@@ -278,8 +322,8 @@ tr.highlight-row td{color:var(--blue)}
     </div>
   </div>
 
-  <div class="section" data-slide="12" data-time="0:00 – 0:05">
-    <div class="sec-head"><span class="sec-num">12</span><span class="sec-title">Block 2 — Was sind Elektronen?</span><span class="sec-time">5 min</span></div>
+  <div class="section" data-slide="15" data-time="0:00 – 0:05">
+    <div class="sec-head"><span class="sec-num">15</span><span class="sec-title">Block 2 — Was sind Elektronen?</span><span class="sec-time">5 min</span></div>
     <ul class="bullets">
       <li>"Willkommen in Block 2. Hier wird's komisch — das sage ich euch jetzt schon."</li>
       <li class="ask">"Was sind Elektronen?" → Antworten sammeln (Teilchen, Masse, Ladung)</li>
@@ -288,8 +332,8 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="13" data-time="0:05 – 0:10">
-    <div class="sec-head"><span class="sec-num">13</span><span class="sec-title">Erwartung</span><span class="sec-time">5 min</span></div>
+  <div class="section" data-slide="16" data-time="0:05 – 0:10">
+    <div class="sec-head"><span class="sec-num">16</span><span class="sec-title">Erwartung</span><span class="sec-time">5 min</span></div>
     <ul class="bullets">
       <li>"Erwartung: zwei Häufungen. Wie wenn man Kugeln durch zwei Löcher wirft."</li>
       <li>"Teilchen gehen durch einen Spalt oder den anderen — nicht durch beide gleichzeitig."</li>
@@ -298,8 +342,8 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="14" data-time="0:10 – 0:30">
-    <div class="sec-head"><span class="sec-num">14</span><span class="sec-title">Tonomura 1989</span><span class="sec-time">20 min</span></div>
+  <div class="section" data-slide="17" data-time="0:10 – 0:30">
+    <div class="sec-head"><span class="sec-num">17</span><span class="sec-title">Tonomura 1989</span><span class="sec-time">20 min</span></div>
     <div class="vid-box">
       <p class="vid-title">📹 Video abspielen: Tonomura Experiment</p>
       <p style="font-size:.88rem">Klasse still sein lassen — einfach zuschauen</p>
@@ -315,8 +359,8 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="15" data-time="0:30 – 0:50">
-    <div class="sec-head"><span class="sec-num">15</span><span class="sec-title">Welcher-Weg-Versuch</span><span class="sec-time">20 min</span></div>
+  <div class="section" data-slide="18" data-time="0:30 – 0:50">
+    <div class="sec-head"><span class="sec-num">18</span><span class="sec-title">Welcher-Weg-Versuch</span><span class="sec-time">20 min</span></div>
     <ul class="bullets">
       <li>"Man dachte: okay, wir schauen einfach nach durch welchen Spalt das Elektron geht."</li>
       <li>"Detektor anbringen — misst welchen Spalt das Elektron passiert."</li>
@@ -329,8 +373,8 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="16" data-time="0:50 – 1:05">
-    <div class="sec-head"><span class="sec-num">16</span><span class="sec-title">Heisenberg-Unschärfe</span><span class="sec-time">15 min</span></div>
+  <div class="section" data-slide="19" data-time="0:50 – 1:05">
+    <div class="sec-head"><span class="sec-num">19</span><span class="sec-title">Heisenberg-Unschärfe</span><span class="sec-time">15 min</span></div>
     <ul class="bullets">
       <li>"Werner Heisenberg hat das 1927 mathematisch bewiesen — wir machen es qualitativ."</li>
       <li>"Je genauer wir den Ort eines Teilchens kennen, desto ungenauer sein Impuls — und umgekehrt."</li>
@@ -341,8 +385,8 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="17" data-time="1:05 – 1:20">
-    <div class="sec-head"><span class="sec-num">17</span><span class="sec-title">Schrödingers Katze</span><span class="sec-time">15 min</span></div>
+  <div class="section" data-slide="20" data-time="1:05 – 1:20">
+    <div class="sec-head"><span class="sec-num">20</span><span class="sec-title">Schrödingers Katze</span><span class="sec-time">15 min</span></div>
     <ul class="bullets">
       <li>"Erwin Schrödinger wollte zeigen wie absurd Quantenphysik ist — als Kritik gedacht"</li>
       <li>"Box: Katze, radioaktives Atom, Giftmechanismus (Auslöser bei Zerfall)"</li>
@@ -354,8 +398,8 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="18" data-time="1:20 – 1:25">
-    <div class="sec-head"><span class="sec-num">18</span><span class="sec-title">Quantencomputing</span><span class="sec-time">5 min</span></div>
+  <div class="section" data-slide="21" data-time="1:20 – 1:25">
+    <div class="sec-head"><span class="sec-num">21</span><span class="sec-title">Quantencomputing</span><span class="sec-time">5 min</span></div>
     <ul class="bullets">
       <li>"Und genau diese Eigenschaft — Superposition — nutzen Quantencomputer."</li>
       <li>"Normaler Bit: 0 oder 1. Qubit: 0 UND 1 gleichzeitig — in Superposition."</li>
@@ -365,8 +409,8 @@ tr.highlight-row td{color:var(--blue)}
     </ul>
   </div>
 
-  <div class="section" data-slide="19" data-time="1:25 – 1:30+">
-    <div class="sec-head"><span class="sec-num">19</span><span class="sec-title">Fazit</span><span class="sec-time">10 min</span></div>
+  <div class="section" data-slide="22" data-time="1:25 – 1:35+">
+    <div class="sec-head"><span class="sec-num">22</span><span class="sec-title">Fazit</span><span class="sec-time">10 min</span></div>
     <ul class="bullets">
       <li class="do">Punkte kurz durchgehen, Klasse ergänzen lassen</li>
       <li>"Licht und Elektronen: je nach Messung Welle oder Teilchen"</li>
@@ -383,7 +427,7 @@ tr.highlight-row td{color:var(--blue)}
 
 <script>
 // --- AUTH ---
-const HASH='8ce97d93e2bcd26be81ddd8ed2a4cf988ebeb48f4e54844ce89e0bd7c9bf010d';
+const HASH='f52fc968b9a7dbcbdea06c1c768117e50fc262db6eaa4391bdbf4232d105ccab';
 async function sha256(s){
   const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
   return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
@@ -432,7 +476,7 @@ function goSec(d){
   secs[cur].classList.add('active-sec');
   secs[cur].scrollIntoView({behavior:'smooth',block:'start'});
   const slide=secs[cur].dataset.slide;
-  document.getElementById('slide-ind').textContent='Folie '+slide+' / 19';
+  document.getElementById('slide-ind').textContent='Folie '+slide+' / 22';
 }
 secs[0].classList.add('active-sec');
 </script>
