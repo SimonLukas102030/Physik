@@ -8,7 +8,7 @@ Eine kurze Einführung in die Quantenphysik, präsentiert von **Simon, Robin und
 
 | Datei | Beschreibung |
 |---|---|
-| [📊 Präsentation](./quantenphysik_praesentation.html) | Die interaktive HTML-Präsentation – im Browser öffnen |
+| [📊 Präsentation](https://simonlukas102030.github.io/Physik/quantenphysik_praesentation.html) | Die interaktive HTML-Präsentation – im Browser öffnen |
 | [📄 Handout](./quantenphysik_handout.pdf) | Einseitiges Zusammenfassungs-PDF zum Ausdrucken |
 
 ---
