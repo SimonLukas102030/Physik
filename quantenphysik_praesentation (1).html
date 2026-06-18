@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantenphysik – Eine Reise ins Kleinste</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --space: #0a0f2e;
+    --deep: #060a1f;
+    --cyan: #00e5ff;
+    --amber: #ffb300;
+    --purple: #7c4dff;
+    --white: #f0f4ff;
+    --muted: #8892b0;
+    --card: rgba(255,255,255,0.04);
+    --border: rgba(0,229,255,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--space);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── Canvas background ── */
+  #bg-canvas {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Slide container ── */
+  #slides {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    text-align: center;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ── Typography ── */
+  .eyebrow {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 24px;
+  }
+  .subtitle {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 700px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .body-text {
+    font-size: 1rem;
+    color: var(--white);
+    max-width: 800px;
+    line-height: 1.8;
+  }
+
+  /* ── Cards ── */
+  .card-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    max-width: 260px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+  }
+  .card-icon { font-size: 2rem; margin-bottom: 12px; }
+  .card h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    color: var(--cyan);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── Highlight box ── */
+  .highlight {
+    background: rgba(0,229,255,0.07);
+    border: 1px solid var(--cyan);
+    border-radius: 12px;
+    padding: 20px 32px;
+    margin: 20px auto;
+    max-width: 720px;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .highlight .label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* ── Math formula display ── */
+  .formula {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    color: var(--amber);
+    padding: 24px 40px;
+    border: 1px solid rgba(255,179,0,0.3);
+    border-radius: 12px;
+    background: rgba(255,179,0,0.05);
+    margin: 24px auto;
+    display: inline-block;
+    letter-spacing: 0.05em;
+  }
+  .formula-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* ── Bullet list ── */
+  .bullet-list {
+    text-align: left;
+    max-width: 650px;
+    margin: 16px auto;
+  }
+  .bullet-list li {
+    list-style: none;
+    padding: 10px 0 10px 28px;
+    position: relative;
+    font-size: 1rem;
+    line-height: 1.6;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .bullet-list li::before {
+    content: '▸';
+    color: var(--cyan);
+    position: absolute;
+    left: 0;
+  }
+
+  /* ── Interaction box ── */
+  .interaction {
+    background: rgba(124,77,255,0.08);
+    border: 1px solid rgba(124,77,255,0.4);
+    border-radius: 16px;
+    padding: 24px 36px;
+    margin: 20px auto;
+    max-width: 700px;
+  }
+  .interaction .int-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--purple);
+    margin-bottom: 10px;
+    display: block;
+  }
+  .interaction p { font-size: 1rem; line-height: 1.7; }
+
+  /* ── Timeline ── */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    text-align: left;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .tl-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .tl-year {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    color: var(--amber);
+    min-width: 60px;
+    padding-top: 2px;
+  }
+  .tl-text { font-size: 0.9rem; line-height: 1.5; color: var(--white); }
+  .tl-text strong { color: var(--cyan); }
+
+
+
+  /* ── Progress bar ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    transition: width 0.4s ease;
+    z-index: 200;
+  }
+
+  /* ── Atom animation ── */
+  .atom-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 24px;
+  }
+  .atom-nucleus {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px; height: 24px;
+    background: radial-gradient(circle, var(--amber), #ff6d00);
+    border-radius: 50%;
+    box-shadow: 0 0 20px var(--amber);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 20px var(--amber)} 50%{box-shadow:0 0 40px var(--amber), 0 0 60px rgba(255,179,0,0.4)} }
+  .orbit {
+    position: absolute;
+    top: 50%; left: 50%;
+    border-radius: 50%;
+    border: 1px solid rgba(0,229,255,0.3);
+    transform-origin: center;
+  }
+  .orbit::after {
+    content: '';
+    position: absolute;
+    width: 10px; height: 10px;
+    background: var(--cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--cyan);
+    top: -5px; left: 50%; transform: translateX(-50%);
+  }
+  .orbit-1 { width: 80px; height: 80px; margin: -40px 0 0 -40px; animation: spin1 3s linear infinite; }
+  .orbit-2 { width: 130px; height: 130px; margin: -65px 0 0 -65px; animation: spin2 5s linear infinite; transform: rotate(60deg); }
+  .orbit-3 { width: 180px; height: 180px; margin: -90px 0 0 -90px; animation: spin3 7s linear infinite; transform: rotate(120deg); }
+  @keyframes spin1 { to { transform: rotate(360deg); } }
+  @keyframes spin2 { to { transform: rotate(420deg); } }
+  @keyframes spin3 { to { transform: rotate(480deg); } }
+
+  /* ── Spectrum bar ── */
+  .spectrum {
+    width: 100%;
+    max-width: 600px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(90deg,
+      #8b00ff, #4400ff, #0000ff, #00a0ff,
+      #00ff88, #ffff00, #ff8800, #ff0000);
+    margin: 16px auto;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,229,255,0.3);
+  }
+  .spectrum-labels {
+    display: flex;
+    justify-content: space-between;
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 0.7rem;
+    color: var(--muted);
+    padding: 0 4px;
+  }
+
+  /* ── Two-column ── */
+  .two-col {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .two-col .col { flex: 1; }
+  .two-col .col h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    color: var(--amber);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+  .two-col .col p { font-size: 0.9rem; line-height: 1.7; color: var(--muted); }
+
+  /* ── Big number ── */
+  .big-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: 0 0 40px rgba(0,229,255,0.5);
+    line-height: 1;
+    margin: 16px 0 8px;
+  }
+
+  /* ── Animated reveal ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .slide.active .reveal { opacity: 1; transform: translateY(0); }
+  .slide.active .reveal:nth-child(1) { transition-delay: 0.1s; }
+  .slide.active .reveal:nth-child(2) { transition-delay: 0.2s; }
+  .slide.active .reveal:nth-child(3) { transition-delay: 0.3s; }
+  .slide.active .reveal:nth-child(4) { transition-delay: 0.4s; }
+  .slide.active .reveal:nth-child(5) { transition-delay: 0.5s; }
+  .slide.active .reveal:nth-child(6) { transition-delay: 0.6s; }
+
+  /* ── Speaker tag ── */
+  .speaker-tag {
+    position: fixed;
+    top: 20px; right: 24px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    z-index: 200;
+    background: rgba(10,15,46,0.7);
+    backdrop-filter: blur(8px);
+  }
+  .speaker-simon { border-color: rgba(0,229,255,0.5); color: var(--cyan); }
+  .speaker-robin  { border-color: rgba(255,179,0,0.5); color: var(--amber); }
+  .speaker-lucas  { border-color: rgba(124,77,255,0.5); color: var(--purple); }
+
+  /* ── Divider ── */
+  .divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    margin: 20px auto;
+    border-radius: 2px;
+  }
+
+  /* ── Wave illustration ── */
+  .wave-box {
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+  }
+  .wave-box svg { width: 100%; }
+
+  /* ── Photoelectric interactive ── */
+  #photo-demo {
+    position: relative;
+    max-width: 500px;
+    margin: 16px auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  #photo-demo label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  #photo-demo input[type=range] {
+    width: 100%;
+    accent-color: var(--cyan);
+  }
+  #photo-demo .result {
+    margin-top: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    min-height: 28px;
+  }
+  .result-yes { color: var(--cyan); }
+  .result-no  { color: var(--amber); }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="progress-bar"></div>
+<div id="speaker-tag" class="speaker-tag">● SIMON</div>
+
+<div id="slides">
+
+  <!-- ──────────── SLIDE 0 – Titel ──────────── -->
+  <div class="slide active" data-speaker="simon">
+    <div class="atom-container reveal">
+      <div class="atom-nucleus"></div>
+      <div class="orbit orbit-1"></div>
+      <div class="orbit orbit-2"></div>
+      <div class="orbit orbit-3"></div>
+    </div>
+    <div class="eyebrow reveal">Physik • 9. Klasse • Brandenburg</div>
+    <h1 class="reveal">Quantenphysik</h1>
+    <p class="subtitle reveal">Eine Reise ins Kleinste –<br>Wie die Welt im Inneren wirklich funktioniert</p>
+    <div class="divider reveal"></div>
+    <p class="body-text reveal" style="font-size:0.9rem; color:var(--muted)">Simon · Robin · Lucas</p>
+  </div>
+
+  <!-- ──────────── SLIDE 1 – Was ist Quantenphysik? ──────────── -->
+  <div class="slide" data-speaker="simon">
+    <div class="eyebrow reveal">Einführung</div>
+    <h2 class="reveal">Was ist Quantenphysik eigentlich?</h2>
+    <div class="divider reveal"></div>
+    <div class="two-col reveal">
+      <div class="col">
+        <h3>Klassische Physik</h3>
+        <p>Beschreibt, was wir <em>sehen</em> können. Äpfel fallen, Bälle rollen, Autos fahren. Die Regeln sind logisch und vorhersehbar.</p>
+      </div>
+      <div class="col">
+        <h3>Quantenphysik</h3>
+        <p>Beschreibt, was mit den <em>winzigsten Bausteinen</em> passiert – Elektronen, Photonen, Atomen. Hier gelten andere Regeln.</p>
+      </div>
+    </div>
+    <div class="highlight reveal">
+      <span class="label">Kerngedanke</span>
+      Quantenphysik ist die Physik des Allerkleinsten – und sie ist manchmal völlig anders als alles, was wir kennen.
+    </div>
+    <div class="interaction reveal">
+      <span class="int-label">● Frage an die Klasse</span>
+      <p>Wie klein ist ein Atom? Wenn ein Apfel so groß wie die Erde wäre – wie groß wären dann die Atome des Apfels?</p>
+    </div>
+  </div>
+
+  <!-- ──────────── SLIDE 2 – Atome & Elektronen ──────────── -->
+  <div class="slide" data-speaker="simon">
+    <div class="eyebrow reveal">Aufbau der Materie</div>
+    <h2 class="reveal">Atome – die Bausteine von allem</h2>
+    <div class="divider reveal"></div>
+    <div class="card-row reveal">
+      <div class="card">
+        <div class="card-icon">⚛️</div>
+        <h3>Atomkern</h3>
+        <p>Protonen (+) und Neutronen. Sehr schwer, sehr klein. Trägt fast die gesamte Masse.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Elektronen</h3>
+        <p>Negativ geladen (−). Bewegen sich um den Kern. Extrem leicht – viel kleiner als der Kern.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔋</div>
+        <h3>Energieniveaus</h3>
+        <p>Elektronen können nicht überall sein – nur auf bestimmten „Etagen". Das ist Quantisierung!</p>
+      </div>
+    </div>
+    <div class="highlight reveal" style="margin-top:20px">
+      <span class="label">Analogie</span>
+      Stell dir ein Hochhaus vor: Elektronen dürfen nur auf bestimmten Stockwerken wohnen – niemals zwischen zwei Etagen.
+    </div>
+  </div>
+
+  <!-- ──────────── SLIDE 3 – Quantisierung ──────────── -->
+  <div class="slide" data-speaker="simon">
+    <div class="eyebrow reveal">Schlüsselkonzept</div>
+    <h2 class="reveal">Quantisierung – nur bestimmte Mengen</h2>
+    <div class="divider reveal"></div>
+    <p class="body-text reveal">Energie kommt nicht in beliebigen Mengen – sie kommt in kleinen <strong style="color:var(--cyan)">Paketen (Quanten)</strong>.</p>
+    <div class="formula reveal">E = n · E₀</div>
+    <div class="formula-label reveal">
+      <strong>E</strong> = Energie &nbsp;|&nbsp;
+      <strong>n</strong> = ganze Zahl (1, 2, 3 …) &nbsp;|&nbsp;
+      <strong>E₀</strong> = kleinste Energiemenge
+    </div>
+    <div class="interaction reveal" style="margin-top:20px">
+      <span class="int-label">● Interaktion</span>
+      <p>Treppenstufen vs. Rampe: Zeigt mit euren Händen, wie Energie bei einer Rampe vs. einer Treppe zunehmen würde. Welche entspricht der Quantenphysik?</p>
+    </div>
+  </div>
+
+  <!-- ──────────── SLIDE 4 – Licht als Welle ──────────── -->
+  <div class="slide" data-speaker="robin">
+    <div class="eyebrow reveal">Licht verstehen</div>
+    <h2 class="reveal">Licht – eine Welle?</h2>
+    <div class="divider reveal"></div>
+    <p class="body-text reveal" style="max-width:700px; margin-bottom:16px">
+      Licht breitet sich wie eine Welle aus. Wellen haben eine <strong style="color:var(--cyan)">Wellenlänge</strong> – das bestimmt die Farbe.
+    </p>
+    <div class="wave-box reveal">
+      <svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="wg" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#8b00ff"/>
+            <stop offset="50%" stop-color="#00e5ff"/>
+            <stop offset="100%" stop-color="#ff0000"/>
+          </linearGradient>
+        </defs>
+        <!-- Wave path -->
+        <path d="M0,60 C14,20 28,20 42,60 C56,100 70,100 84,60 C98,20 112,20 126,60 C140,100 154,100 168,60 C182,20 196,20 210,60 C224,100 238,100 252,60 C266,20 280,20 294,60 C308,100 322,100 336,60 C350,20 364,20 378,60 C392,100 406,100 420,60 C434,20 448,20 462,60 C476,100 490,100 504,60 C518,20 532,20 546,60"
+          stroke="url(#wg)" stroke-width="3" fill="none"/>
+        <!-- Labels -->
+        <text x="42" y="16" fill="#8892b0" font-size="9" text-anchor="middle" font-family="Inter">↔ kurze Wellenlänge</text>
+        <text x="462" y="16" fill="#8892b0" font-size="9" text-anchor="middle" font-family="Inter">↔ lange Wellenlänge</text>
+        <line x1="21" y1="60" x2="63" y2="60" stroke="#ffffff22" stroke-dasharray="3 2"/>
+        <line x1="441" y1="60" x2="483" y2="60" stroke="#ffffff22" stroke-dasharray="3 2"/>
+      </svg>
+    </div>
+    <div class="spectrum reveal"></div>
+    <div class="spectrum-labels reveal">
+      <span>Violett</span><span>Blau</span><span>Grün</span><span>Gelb</span><span>Orange</span><span>Rot</span>
+    </div>
+    <p class="body-text reveal" style="font-size:0.85rem; color:var(--muted); margin-top:12px">
+      Kurze Wellenlänge = mehr Energie (violett/blau) · Lange Wellenlänge = weniger Energie (rot)
+    </p>
+  </div>
+
+  <!-- ──────────── SLIDE 5 – Licht als Teilchen ──────────── -->
+  <div class="slide" data-speaker="simon">
+    <div class="eyebrow reveal">Der Quantensprung</div>
+    <h2 class="reveal">Licht ist auch ein Teilchen – das Photon</h2>
+    <div class="divider reveal"></div>
+    <p class="body-text reveal">Einstein (1905): Licht besteht nicht nur aus Wellen – sondern auch aus winzigen <strong style="color:var(--amber)">Lichtpaketen</strong>, sogenannten <strong style="color:var(--amber)">Photonen</strong>.</p>
+    <div class="formula reveal">E = h · f</div>
+    <div class="formula-label reveal">
+      <strong>E</strong> = Energie des Photons &nbsp;|&nbsp;
+      <strong>h</strong> = Plancksches Wirkungsquantum &nbsp;|&nbsp;
+      <strong>f</strong> = Frequenz (wie oft schwingt es)
+    </div>
+    <div class="highlight reveal">
+      <span class="label">Merksatz</span>
+      Je höher die Frequenz (je kürzer die Wellenlänge), desto mehr Energie trägt das Photon.
+    </div>
+    <div class="interaction reveal">
+      <span class="int-label">● Frage an die Klasse</span>
+      <p>Warum verbrennt man sich eher an UV-Licht als an rotem Licht – obwohl beides Licht ist?</p>
+    </div>
+  </div>
+
+  <!-- ──────────── SLIDE 6 – Fotoeffekt ──────────── -->
+  <div class="slide" data-speaker="lucas">
+    <div class="eyebrow reveal">Anwendung</div>
+    <h2 class="reveal">Der Photoelektrische Effekt</h2>
+    <div class="divider reveal"></div>
+    <p class="body-text reveal" style="max-width:700px">Trifft Licht auf eine Metallplatte, können Elektronen herausgeschlagen werden – aber nur, wenn das Licht <strong style="color:var(--cyan)">genug Energie</strong> hat.</p>
+
+    <div id="photo-demo" class="reveal">
+      <label>Frequenz des Lichts (Farbe): <span id="freq-val">Grün</span></label>
+      <input type="range" id="freq-slider" min="1" max="10" value="5" oninput="updatePhotoEffect()">
+      <div id="photo-visual" style="text-align:center; font-size:2rem; margin:12px 0">🔆 + 🔩</div>
+      <div class="result" id="photo-result"></div>
+    </div>
+
+    <div class="highlight reveal">
+      <span class="label">Wichtig</span>
+      Mehr Helligkeit (Intensität) hilft nicht, wenn die Frequenz zu gering ist. Nur die richtige Frequenz schlägt Elektronen heraus!
+    </div>
+  </div>
+
+  <!-- ──────────── SLIDE 7 – Welle-Teilchen-Dualismus ──────────── -->
+  <div class="slide" data-speaker="simon">
+    <div class="eyebrow reveal">Das große Paradox</div>
+    <h2 class="reveal">Welle oder Teilchen?</h2>
+    <div class="divider reveal"></div>
+    <div class="two-col reveal">
+      <div class="col">
+        <h3>Als Welle</h3>
+        <p>Licht beugt sich um Ecken, es entsteht ein Interferenzmuster (helle und dunkle Streifen). Das funktioniert nur bei Wellen.</p>
+      </div>
+      <div class="col">
+        <h3>Als Teilchen</h3>
+        <p>Beim Photoeffekt verhält sich Licht wie kleine Kugeln, die auf Elektronen treffen. Das funktioniert nur bei Teilchen.</p>
+      </div>
+    </div>
+    <div class="highlight reveal" style="margin-top:20px">
+      <span class="label">Antwort der Quantenphysik</span>
+      Beides! Licht ist Welle <em>und</em> Teilchen gleichzeitig – je nachdem, wie man es misst. Das nennt man <strong style="color:var(--cyan)">Welle-Teilchen-Dualismus</strong>.
+    </div>
+    <div class="interaction reveal">
+      <span class="int-label">● Gedankenexperiment</span>
+      <p>Stellt euch vor, jemand fragt: „Ist Musik ein Ton oder eine Schwingung?" Was würdet ihr antworten?</p>
+    </div>
+  </div>
+
+  <!-- ──────────── SLIDE 8 – Unschärferelation ──────────── -->
+  <div class="slide" data-speaker="simon">
+    <div class="eyebrow reveal">Heisenberg 1927</div>
+    <h2 class="reveal">Die Unschärferelation</h2>
+    <div class="divider reveal"></div>
+    <p class="body-text reveal" style="max-width:740px">Im Quantenreich kann man <strong style="color:var(--cyan)">Ort</strong> und <strong style="color:var(--amber)">Geschwindigkeit</strong> eines Teilchens nicht gleichzeitig genau kennen. Je genauer man einen kennt, desto ungenauer wird der andere.</p>
+    <div class="formula reveal">Δx · Δp ≥ ℏ</div>
+    <div class="formula-label reveal">
+      <strong>Δx</strong> = Ungenauigkeit des Ortes &nbsp;|&nbsp;
+      <strong>Δp</strong> = Ungenauigkeit des Impulses &nbsp;|&nbsp;
+      <strong>ℏ</strong> = sehr kleine Zahl
+    </div>
+    <div class="highlight reveal">
+      <span class="label">Analogie</span>
+      Wie ein Foto eines schnellen Autos: Um zu sehen, wie schnell es fährt (Bewegungsunschärfe), musst du die genaue Position unscharf lassen.
+    </div>
+    <ul class="bullet-list reveal">
+      <li>Das ist kein Messfehler – die Natur ist wirklich so ungenau</li>
+      <li>Gilt nur im Quantenbereich – im Alltag ist ℏ viel zu klein, um es zu merken</li>
+    </ul>
+  </div>
+
+  <!-- ──────────── SLIDE 9 – Geschichte ──────────── -->
+  <div class="slide" data-speaker="robin">
+    <div class="eyebrow reveal">Geschichte der Quantenphysik</div>
+    <h2 class="reveal">Wie alles begann</h2>
+    <div class="divider reveal"></div>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-year">1900</div>
+        <div class="tl-text"><strong>Max Planck</strong> entdeckt, dass Energie in kleinen Paketen kommt – die Geburt der Quantenphysik.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1905</div>
+        <div class="tl-text"><strong>Albert Einstein</strong> erklärt den Photoeffekt mit Photonen (Lichtquanten) – er bekommt dafür den Nobelpreis.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1913</div>
+        <div class="tl-text"><strong>Niels Bohr</strong> entwickelt das Modell der Elektronenbahnen im Atom – Elektronen auf Etagen.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1927</div>
+        <div class="tl-text"><strong>Werner Heisenberg</strong> formuliert die Unschärferelation – Ort und Tempo nie beides exakt.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">Heute</div>
+        <div class="tl-text">Quantenphysik steckt in <strong>Smartphones, Lasern, MRT-Geräten</strong> und zukünftigen Quantencomputern.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──────────── SLIDE 10 – Anwendungen ──────────── -->
+  <div class="slide" data-speaker="lucas">
+    <div class="eyebrow reveal">Quantenphysik heute</div>
+    <h2 class="reveal">Ohne Quanten – kein Smartphone</h2>
+    <div class="divider reveal"></div>
+    <div class="card-row reveal">
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h3>Halbleiter & Chips</h3>
+        <p>Transistoren in Prozessoren funktionieren nur durch das Verständnis von Elektronen im Quantenbereich.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔴</div>
+        <h3>Laser</h3>
+        <p>Laserlicht entsteht, wenn Elektronen von höheren auf niedrigere Energieniveaus springen – reine Quantenphysik.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏥</div>
+        <h3>MRT</h3>
+        <p>Magnetresonanztomographie nutzt Quanteneigenschaften von Wasserstoffatomen im Körper.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚛️</div>
+        <h3>Quantencomputer</h3>
+        <p>Computer der Zukunft – nutzen die Unschärfe, um viele Rechnungen gleichzeitig durchzuführen.</p>
+      </div>
+    </div>
+    <p class="body-text reveal" style="font-size:0.85rem; color:var(--muted); margin-top:20px">Die Quantenphysik ist nicht nur Theorie – sie ist überall in eurem Alltag.</p>
+  </div>
+
+  <!-- ──────────── SLIDE 11 – Abschluss ──────────── -->
+  <div class="slide" data-speaker="simon">
+    <div class="atom-container reveal">
+      <div class="atom-nucleus"></div>
+      <div class="orbit orbit-1"></div>
+      <div class="orbit orbit-2"></div>
+      <div class="orbit orbit-3"></div>
+    </div>
+    <div class="eyebrow reveal">Zusammenfassung</div>
+    <h2 class="reveal">Das Wichtigste auf einen Blick</h2>
+    <div class="divider reveal"></div>
+    <ul class="bullet-list reveal">
+      <li>Quantenphysik beschreibt das Verhalten kleinster Teilchen</li>
+      <li>Energie ist gequantelt – sie kommt in Paketen (Quanten)</li>
+      <li>Licht ist gleichzeitig Welle und Teilchen (Dualismus)</li>
+      <li>Man kann Ort und Geschwindigkeit nicht gleichzeitig exakt kennen</li>
+      <li>Quantenphysik steckt in fast allen modernen Technologien</li>
+    </ul>
+    <div class="interaction reveal" style="margin-top:24px">
+      <span class="int-label">● Abschlussfrage an die Klasse</span>
+      <p>Was habt ihr heute gelernt, das euch am meisten überrascht hat?</p>
+    </div>
+  </div>
+
+</div><!-- end #slides -->
+
+<!-- touch navigation handled in JS -->
+
+<script>
+// ── Particle background ──
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function createParticles() {
+  particles = [];
+  const count = Math.floor(window.innerWidth * window.innerHeight / 12000);
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.3,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.5 + 0.1,
+      color: Math.random() > 0.5 ? '0,229,255' : '124,77,255'
+    });
+  }
+}
+createParticles();
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = canvas.width;
+    if (p.x > canvas.width) p.x = 0;
+    if (p.y < 0) p.y = canvas.height;
+    if (p.y > canvas.height) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${p.color},${p.alpha})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ── Slide navigation ──
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+
+const speakerColors = { simon: 'speaker-simon', robin: 'speaker-robin', lucas: 'speaker-lucas' };
+const speakerEl = document.getElementById('speaker-tag');
+
+function goTo(n) {
+  slides[current].classList.remove('active');
+  current = Math.max(0, Math.min(n, slides.length - 1));
+  slides[current].classList.add('active');
+  document.getElementById('progress-bar').style.width = `${(current / (slides.length - 1)) * 100}%`;
+  const spk = slides[current].dataset.speaker || 'simon';
+  speakerEl.textContent = '● ' + spk.toUpperCase();
+  speakerEl.className = 'speaker-tag ' + (speakerColors[spk] || '');
+}
+
+function nextSlide() { goTo(current + 1); }
+function prevSlide() { goTo(current - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+  if (e.key === 'ArrowLeft') prevSlide();
+});
+
+// ── Touch / click navigation ──
+// Tap left half → prev, right half → next
+// Ignore taps on interactive elements (slider, buttons)
+const INTERACTIVE = ['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA', 'LABEL'];
+
+function handleTap(clientX, target) {
+  if (INTERACTIVE.includes(target.tagName)) return;
+  if (target.closest('input, button, select, textarea, label')) return;
+  if (clientX < window.innerWidth / 2) prevSlide();
+  else nextSlide();
+}
+
+// Click (works on iPad too)
+document.addEventListener('click', e => {
+  handleTap(e.clientX, e.target);
+});
+
+// Touch – use touchend so it doesn't fight with scroll/swipe
+let touchStartX = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].clientX;
+}, { passive: true });
+
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  // Only treat as tap if finger barely moved (not a swipe)
+  if (Math.abs(dx) < 20) {
+    handleTap(e.changedTouches[0].clientX, e.target);
+  }
+}, { passive: true });
+
+// ── Photoelectric demo ──
+function updatePhotoEffect() {
+  const v = parseInt(document.getElementById('freq-slider').value);
+  const labels = ['Infrarot','Infrarot','Rot','Orange','Grün','Cyan','Blau','Blau','UV','UV'];
+  document.getElementById('freq-val').textContent = labels[v - 1];
+  const res = document.getElementById('photo-result');
+  const vis = document.getElementById('photo-visual');
+  if (v >= 7) {
+    res.innerHTML = '<span class="result-yes">⚡ Elektronen werden herausgeschlagen! (genug Energie)</span>';
+    vis.textContent = '💡 + 🔩 → ⚡ e⁻';
+  } else if (v >= 5) {
+    res.innerHTML = '<span class="result-yes">〜 Grenzfrequenz – knapp!</span>';
+    vis.textContent = '🔆 + 🔩 → ?';
+  } else {
+    res.innerHTML = '<span class="result-no">✗ Keine Elektronen – Frequenz zu gering!</span>';
+    vis.textContent = '🔅 + 🔩 → nichts';
+  }
+}
+updatePhotoEffect();
+
+// Initial progress
+goTo(0);
+</script>
+</body>
+</html>
